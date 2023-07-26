@@ -11,7 +11,6 @@
 </template>
 
 <script>
-s;
 import { defineComponent } from "vue";
 
 export default defineComponent({
