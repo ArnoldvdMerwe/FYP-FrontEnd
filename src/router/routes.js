@@ -12,9 +12,19 @@ const routes = [
   },
   {
     path: "/login",
-    title: "Login",
-    name: "Login",
-    component: () => import("pages/LoginPage.vue"),
+    component: () => import("layouts/LoginRegisterLayout.vue"),
+    children: [
+      {
+        path: "/login",
+        meta: { transition: "slide-left" },
+        component: () => import("pages/LoginPage.vue"),
+      },
+      {
+        path: "/register",
+        meta: { transition: "slide-right" },
+        component: () => import("pages/RegisterPage.vue"),
+      },
+    ],
   },
 
   // Always leave this as last one,
