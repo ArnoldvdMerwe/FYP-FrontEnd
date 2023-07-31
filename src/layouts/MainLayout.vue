@@ -27,7 +27,13 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container
+      style="
+        background-image: url(login_background.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+      "
+    >
       <router-view />
     </q-page-container>
   </q-layout>
