@@ -7,13 +7,15 @@
           <q-stepper v-model="step" ref="stepper" color="primary" animated>
             <q-step
               :name="1"
-              title="Are you a homeowner or admin?"
+              title="Role"
               icon="group"
               :done="step > 1"
               style="min-height: 395px"
             >
               <q-select
                 filled
+                :error-message="this.errorMsg"
+                :error="!validEntries"
                 v-model="role"
                 :options="roleOptions"
                 label="Role"
@@ -27,13 +29,44 @@
               style="min-height: 395px"
             >
               <div class="q-gutter-md">
-                <q-input filled v-model="first" label="First Name" />
-                <q-input filled v-model="last" label="Last Name" />
-                <q-input filled v-model="email" label="Email" />
-                <q-input filled v-model="cellphone" label="Cellphone number" />
+                <q-input
+                  filled
+                  hide-bottom-space
+                  :error-message="this.errorMsg"
+                  :error="!validEntries"
+                  v-model="first"
+                  label="First Name"
+                />
+                <q-input
+                  filled
+                  hide-bottom-space
+                  :error-message="this.errorMsg"
+                  :error="!validEntries"
+                  v-model="last"
+                  label="Last Name"
+                />
+                <q-input
+                  filled
+                  hide-bottom-space
+                  :error-message="this.errorMsg"
+                  :error="!validEntries"
+                  v-model="email"
+                  label="Email"
+                />
+                <q-input
+                  filled
+                  hide-bottom-space
+                  :error-message="this.errorMsg"
+                  :error="!validEntries"
+                  v-model="cellphone"
+                  label="Cellphone number"
+                />
                 <q-input
                   v-if="role == 'Homeowner'"
                   filled
+                  :error-message="this.errorMsg"
+                  :error="!validEntries"
+                  hide-bottom-space
                   v-model="home"
                   label="Home number"
                 />
@@ -64,7 +97,7 @@
             <template v-slot:navigation>
               <q-stepper-navigation>
                 <q-btn
-                  @click="$refs.stepper.next()"
+                  @click="validate"
                   color="primary"
                   :label="step === 3 ? 'Register' : 'Continue'"
                 />
@@ -72,7 +105,7 @@
                   v-if="step > 1"
                   flat
                   color="primary"
-                  @click="$refs.stepper.previous()"
+                  @click="goBack"
                   label="Back"
                   class="q-ml-sm"
                 />
@@ -95,8 +128,6 @@
 </template>
 
 <script>
-import { useUserStore } from "../stores/user-store";
-
 export default {
   name: "RegisterPage",
   data() {
@@ -110,11 +141,64 @@ export default {
       password: null,
       confirmPassword: null,
       role: null,
-      roleOptions: ["", "Homeowner", "Admin"],
+      roleOptions: [null, "Homeowner", "Admin"],
+      validEntries: true,
+      errorMsg: null,
     };
   },
+
   methods: {
-    async onSubmit() {},
+    // Validate input fields
+    validate() {
+      // Validate first section
+      // Homeowner or admin
+      if (this.step === 1) {
+        if (this.role !== null) {
+          this.$refs.stepper.next();
+          this.validEntries = true;
+        } else {
+          this.validEntries = false;
+          this.errorMsg = "Please enter valid role.";
+        }
+      }
+      // Validate second section
+      // User details
+      else if (this.step === 2) {
+        if (
+          this.first !== null &&
+          this.last !== null &&
+          this.email !== null &&
+          this.cellphone !== null
+        ) {
+          if (this.role === "Homeowner" && this.home !== null) {
+            this.$refs.stepper.next();
+            this.validEntries = true;
+          } else if (this.role === "Admin") {
+            this.$refs.stepper.next();
+            this.validEntries = true;
+          } else {
+            this.validEntries = false;
+            this.errorMsg =
+              "Please make sure to enter information into all text fields.";
+          }
+        } else {
+          this.validEntries = false;
+          this.errorMsg =
+            "Please make sure to enter information into all text fields.";
+        }
+      }
+      // Validate third section
+      // Password
+      else if (this.step === 3) {
+      } else {
+        this.$refs.stepper.next();
+      }
+    },
+
+    goBack() {
+      this.validEntries = true;
+      this.$refs.stepper.previous();
+    },
   },
 };
 </script>

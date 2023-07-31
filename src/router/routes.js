@@ -2,6 +2,7 @@ const routes = [
   {
     path: "/",
     redirect: { path: "/login" },
+    meta: { transition: "fade" },
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
@@ -12,6 +13,7 @@ const routes = [
   },
   {
     path: "/login",
+    meta: { transition: "fade" },
     component: () => import("layouts/LoginRegisterLayout.vue"),
     children: [
       {

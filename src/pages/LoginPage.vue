@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center">
     <div class="fit column flex-center">
-      <h3 class="text-secondary" style="margin-bottom: 1%">
+      <h3 class="text-secondary text-center" style="margin-bottom: 1%">
         Renewable energy trading platform
       </h3>
       <q-icon name="home" size="10em" color="secondary" />

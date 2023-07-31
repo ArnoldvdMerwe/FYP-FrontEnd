@@ -1,5 +1,9 @@
 <template>
-  <router-view />
+  <router-view v-slot="{ Component, route }">
+    <transition :name="route.meta.transition" mode="out-in">
+      <component :is="Component"
+    /></transition>
+  </router-view>
 </template>
 
 <script>
@@ -10,21 +14,13 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.fade-enter-from {
-  opacity: 0;
-}
-.fade-enter-to {
-  opacity: 1;
-}
-
+<style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 1s ease;
+  transition: opacity 0.5s ease;
 }
-.fade-leave-from {
-  opacity: 1;
-}
+
+.fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
