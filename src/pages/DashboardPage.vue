@@ -1,23 +1,30 @@
 <template>
-  <q-page class="q-pa-md flex flex-center">
-    <div class="row q-gutter-md flex-center">
-      <div v-for="item in cardList" :key="item.title">
-        <q-card flat bordered style="width: 250px">
-          <q-card-section horizontal class="items-center">
-            <q-card-section :class="item.class">
-              <q-icon :name="item.icon" color="white" size="3em"></q-icon>
+  <q-page class="q-pa-md flex justify-center">
+    <div class="column justify-evenly">
+      <div class="row q-gutter-md flex-center">
+        <div v-for="item in cardList" :key="item.title">
+          <q-card flat bordered style="width: 250px">
+            <q-card-section horizontal class="items-center">
+              <q-card-section :class="item.class">
+                <q-icon :name="item.icon" color="white" size="3em"></q-icon>
+              </q-card-section>
+              <q-card-section class="q-pa-none">
+                <q-item>
+                  <q-item-section>
+                    <q-item-label class="text-h6">
+                      {{ item.value }}
+                    </q-item-label>
+                    <q-item-label caption> {{ item.title }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-card-section>
             </q-card-section>
-            <q-card-section class="q-pa-none">
-              <q-item>
-                <q-item-section>
-                  <q-item-label class="text-h6">
-                    {{ item.value }}
-                  </q-item-label>
-                  <q-item-label caption> {{ item.title }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card-section>
+          </q-card>
+        </div>
+      </div>
+      <div class="q-pa-md">
+        <q-card flat bordered class="q-pa-md">
+          <LineChart />
         </q-card>
       </div>
     </div>
@@ -26,9 +33,13 @@
 
 <script>
 import { defineComponent } from "vue";
+import LineChart from "src/components/LineChart.vue";
 
 export default defineComponent({
   name: "DashboardPage",
+  components: {
+    LineChart,
+  },
 
   data() {
     return {
@@ -64,7 +75,6 @@ export default defineComponent({
           class: "bg-positive",
         },
       ],
-      password: null,
     };
   },
 });
