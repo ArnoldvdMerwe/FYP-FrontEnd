@@ -1,9 +1,13 @@
 <template>
-  <q-page class="q-pa-md flex justify-center">
-    <div class="column justify-evenly">
+  <q-page class="q-pa-md flex justify-around">
+    <div class="column justify-evenly no-wrap">
       <div class="row q-gutter-md flex-center">
-        <div v-for="item in cardList" :key="item.title">
-          <q-card flat bordered style="width: 250px">
+        <div
+          v-for="item in cardList"
+          :key="item.title"
+          class="col-xl-3 col-lg-3 col-md-4 col-sm-8 col-xs-8"
+        >
+          <q-card flat bordered>
             <q-card-section horizontal class="items-center">
               <q-card-section :class="item.class">
                 <q-icon :name="item.icon" color="white" size="3em"></q-icon>
@@ -22,9 +26,22 @@
           </q-card>
         </div>
       </div>
-      <div class="q-pa-md">
-        <q-card flat bordered class="q-pa-md">
-          <LineChart />
+      <div class="col-6 q-pt-md row q-gutter-md justify-evenly">
+        <q-card flat bordered class="col-5 q-pa-sm" style="min-width: 300px">
+          <LineChart
+            chart-id="1"
+            dataset-title="Instant power usage"
+            dataset-color="#507ea1"
+            style="height: 100%"
+          />
+        </q-card>
+        <q-card flat bordered class="col-5 q-pa-sm" style="min-width: 300px">
+          <LineChart
+            chart-id="2"
+            dataset-title="Energy usage"
+            dataset-color="#004d40"
+            style="height: 100%"
+          />
         </q-card>
       </div>
     </div>
@@ -73,6 +90,12 @@ export default defineComponent({
           title: "Receive power during load shedding",
           icon: "electrical_services",
           class: "bg-positive",
+        },
+        {
+          value: "467 W",
+          title: "Load control limit",
+          icon: "priority_high",
+          class: "bg-accent",
         },
       ],
     };
