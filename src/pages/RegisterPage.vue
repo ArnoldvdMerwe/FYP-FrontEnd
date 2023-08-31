@@ -141,7 +141,7 @@ export default {
       password: null,
       confirmPassword: null,
       role: null,
-      roleOptions: [null, "Homeowner", "Admin"],
+      roleOptions: ["Homeowner", "Admin"],
       validEntries: true,
       errorMsg: null,
     };
@@ -149,7 +149,7 @@ export default {
 
   methods: {
     // Validate input fields
-    validate() {
+    async validate() {
       // Validate first section
       // Homeowner or admin
       if (this.step === 1) {
@@ -190,6 +190,17 @@ export default {
       // Validate third section
       // Password
       else if (this.step === 3) {
+        if (this.password === this.confirmPassword) {
+          await this.$axios.post("http://localhost:5000/api/user/sign-up/", {
+            first_name: this.first,
+            last_name: this.last,
+            email: this.email,
+            cellphone: this.cellphone,
+            user_type: this.role,
+            password: this.password,
+            home_number: this.home,
+          });
+        }
       } else {
         this.$refs.stepper.next();
       }
