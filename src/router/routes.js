@@ -1,7 +1,7 @@
 const routes = [
   {
     path: "/",
-    redirect: { path: "/login" },
+    redirect: { path: "/dashboard" },
     meta: { transition: "fade" },
     component: () => import("layouts/MainLayout.vue"),
     children: [

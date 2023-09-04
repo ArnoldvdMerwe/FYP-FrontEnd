@@ -3,7 +3,9 @@ import { api } from "boot/axios";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    user: null,
+    // initialize state from local storage to enable user to stay logged in
+    user: JSON.parse(localStorage.getItem("user")),
+    returnUrl: null,
   }),
 
   actions: {
@@ -34,13 +36,26 @@ export const useUserStore = defineStore("user", {
     },
 
     async signIn(email, password) {
-      console.log("signIn called");
       const res = await api.post("/api/user/login", {
         email: email,
         password: password,
       });
       const user = await res.data;
+
+      // update pinia state
       this.user = user;
+
+      // store user details and JWT in local storage to keep user logged in between page refreshes
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // redirect to previous url or default to dashboard page
+      this.router.push(this.returnUrl || "/dashboard");
+    },
+
+    logOut() {
+      this.user = null;
+      localStorage.removeItem("user");
+      this.router.push("/login");
     },
   },
 });
