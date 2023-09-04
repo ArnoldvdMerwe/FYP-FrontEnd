@@ -128,6 +128,9 @@
 </template>
 
 <script>
+import { mapActions } from "pinia";
+import { useUserStore } from "../stores/user-store";
+
 export default {
   name: "RegisterPage",
   data() {
@@ -148,6 +151,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(useUserStore, ["signUp"]),
     // Validate input fields
     async validate() {
       // Validate first section
@@ -191,15 +195,15 @@ export default {
       // Password
       else if (this.step === 3) {
         if (this.password === this.confirmPassword) {
-          await this.$axios.post("http://localhost:5000/api/user/sign-up/", {
-            first_name: this.first,
-            last_name: this.last,
-            email: this.email,
-            cellphone: this.cellphone,
-            user_type: this.role,
-            password: this.password,
-            home_number: this.home,
-          });
+          this.signUp(
+            this.first,
+            this.last,
+            this.email,
+            this.cellphone,
+            this.role,
+            this.password,
+            this.home
+          );
         }
       } else {
         this.$refs.stepper.next();

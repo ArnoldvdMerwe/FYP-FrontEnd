@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { mapActions } from "pinia";
 import { useUserStore } from "../stores/user-store";
 
 export default {
@@ -52,7 +53,10 @@ export default {
     };
   },
   methods: {
-    async onSubmit() {},
+    ...mapActions(useUserStore, ["signIn"]),
+    async onSubmit() {
+      this.signIn(this.email, this.password);
+    },
   },
 };
 </script>
