@@ -35,7 +35,7 @@ export default route(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach(async (to) => {
-    // redirect to login page if not logged in and trying to access a restricted page
+    // Redirect to login page if not logged in and trying to access a restricted page
     const publicPages = ["/login", "/register"];
     const authRequired = !publicPages.includes(to.path);
     const userStore = useUserStore();
@@ -43,6 +43,13 @@ export default route(function (/* { store, ssrContext } */) {
     if (authRequired && !userStore.user) {
       userStore.returnUrl = to.fullPath;
       return "/login";
+    }
+
+    // Redirect to login page if not admin and trying to access admin content
+    if (to.matched.some((record) => record.meta.admin)) {
+      if (userStore.user.user_role !== "Admin") {
+        return "/login";
+      }
     }
   });
 

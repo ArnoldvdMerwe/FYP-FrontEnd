@@ -33,6 +33,7 @@ export const useUserStore = defineStore("user", {
         password: password,
         home_number: home,
       });
+      this.router.push("/login");
     },
 
     async signIn(email, password) {
@@ -49,7 +50,11 @@ export const useUserStore = defineStore("user", {
       localStorage.setItem("user", JSON.stringify(user));
 
       // redirect to previous url or default to dashboard page
-      this.router.push(this.returnUrl || "/dashboard");
+      if (user.user_role === "Admin") {
+        this.router.push(this.returnUrl || "/admindashboard");
+      } else {
+        this.router.push(this.returnUrl || "/dashboard");
+      }
     },
 
     logOut() {

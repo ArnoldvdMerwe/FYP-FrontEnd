@@ -9,6 +9,11 @@ const routes = [
         path: "/dashboard",
         component: () => import("pages/DashboardPage.vue"),
       },
+      {
+        path: "/admindashboard",
+        component: () => import("pages/AdminDashboardPage.vue"),
+        meta: { admin: true },
+      },
     ],
   },
   {
