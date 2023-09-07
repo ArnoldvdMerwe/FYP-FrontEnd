@@ -23,12 +23,20 @@
       </q-toolbar>
     </q-header>
 
+    <!-- Links menu -->
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
+      <q-list v-if="userStore.user.user_role === 'Homeowner'">
         <q-item-label header> Main Menu </q-item-label>
-
         <EssentialLink
-          v-for="link in essentialLinks"
+          v-for="link in homeownerLinks"
+          :key="link.title"
+          v-bind="link"
+        />
+      </q-list>
+      <q-list v-if="userStore.user.user_role === 'Admin'">
+        <q-item-label header> Main Menu </q-item-label>
+        <EssentialLink
+          v-for="link in adminLinks"
           :key="link.title"
           v-bind="link"
         />
@@ -52,7 +60,7 @@ import { defineComponent, ref } from "vue";
 import { useUserStore } from "../stores/user-store";
 import EssentialLink from "components/EssentialLink.vue";
 
-const linksList = [
+const homeownerLinksList = [
   {
     title: "Dashboard",
     icon: "dashboard",
@@ -62,6 +70,29 @@ const linksList = [
     title: "Settings",
     icon: "settings",
     link: "/settings",
+  },
+];
+
+const adminLinksList = [
+  {
+    title: "Dashboard",
+    icon: "dashboard",
+    link: "/admindashboard",
+  },
+  {
+    title: "Homes",
+    icon: "house",
+    link: "/adminhomes",
+  },
+  {
+    title: "Inverter",
+    icon: "bolt",
+    link: "/admininverter",
+  },
+  {
+    title: "Electrical rates",
+    icon: "toll",
+    link: "/adminrates",
   },
 ];
 
@@ -77,7 +108,8 @@ export default defineComponent({
     const userStore = useUserStore();
 
     return {
-      essentialLinks: linksList,
+      homeownerLinks: homeownerLinksList,
+      adminLinks: adminLinksList,
       leftDrawerOpen,
       userStore,
       toggleLeftDrawer() {
