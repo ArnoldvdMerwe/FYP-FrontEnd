@@ -12,6 +12,14 @@
         />
 
         <q-toolbar-title> Renewable energy trading platform </q-toolbar-title>
+
+        <q-btn
+          flat
+          dense
+          label="Log out"
+          class="q-mr-xs"
+          @click="userStore.logOut()"
+        />
       </q-toolbar>
     </q-header>
 
@@ -41,6 +49,7 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import { useUserStore } from "../stores/user-store";
 import EssentialLink from "components/EssentialLink.vue";
 
 const linksList = [
@@ -65,10 +74,12 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false);
+    const userStore = useUserStore();
 
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
+      userStore,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
