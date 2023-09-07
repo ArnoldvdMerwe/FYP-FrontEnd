@@ -8,9 +8,19 @@
       <div class="full-width row flex-center">
         <div class="col-md-2">
           <q-form @submit="onSubmit" class="q-gutter-md">
-            <q-input filled v-model="email" label="Email address" />
             <q-input
               filled
+              hide-bottom-space
+              :error-message="this.errorMsg"
+              :error="!validEntries"
+              v-model="email"
+              label="Email address"
+            />
+            <q-input
+              filled
+              hide-bottom-space
+              :error-message="this.errorMsg"
+              :error="!validEntries"
               type="password"
               v-model="password"
               label="Password"
@@ -50,12 +60,20 @@ export default {
     return {
       email: null,
       password: null,
+      validEntries: true,
+      errorMsg: "Invalid username or password",
     };
   },
   methods: {
     ...mapActions(useUserStore, ["signIn"]),
+
+    // When the log in button is pressed
     async onSubmit() {
-      this.signIn(this.email, this.password);
+      if (this.email !== null && this.password !== null) {
+        this.validEntries = await this.signIn(this.email, this.password);
+      } else {
+        this.validEntries = false;
+      }
     },
   },
 };

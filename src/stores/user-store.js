@@ -37,23 +37,33 @@ export const useUserStore = defineStore("user", {
     },
 
     async signIn(email, password) {
-      const res = await api.post("/api/user/login", {
-        email: email,
-        password: password,
-      });
-      const user = await res.data;
+      const res = await api
+        .post("/api/user/login", {
+          email: email,
+          password: password,
+        })
+        .catch(function (err) {
+          // Incorrect credentials or other error occured
+          return false;
+        });
+      if (res !== false) {
+        const user = await res.data;
 
-      // update pinia state
-      this.user = user;
+        // update pinia state
+        this.user = user;
 
-      // store user details and JWT in local storage to keep user logged in between page refreshes
-      localStorage.setItem("user", JSON.stringify(user));
+        // store user details and JWT in local storage to keep user logged in between page refreshes
+        localStorage.setItem("user", JSON.stringify(user));
 
-      // redirect to previous url or default to dashboard page
-      if (user.user_role === "Admin") {
-        this.router.push(this.returnUrl || "/admindashboard");
+        // redirect to previous url or default to dashboard page
+        if (user.user_role === "Admin") {
+          this.router.push(this.returnUrl || "/admindashboard");
+        } else {
+          this.router.push(this.returnUrl || "/dashboard");
+        }
+        return true;
       } else {
-        this.router.push(this.returnUrl || "/dashboard");
+        return false;
       }
     },
 
