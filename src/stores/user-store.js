@@ -56,7 +56,7 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("user", JSON.stringify(user));
 
         // redirect to previous url or default to dashboard page
-        if (user.user_role === "Admin") {
+        if (user.user_role == "Admin") {
           this.router.push(this.returnUrl || "/admindashboard");
         } else {
           this.router.push(this.returnUrl || "/dashboard");

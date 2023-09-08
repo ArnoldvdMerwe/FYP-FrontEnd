@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable tag="a" target="_blank" :href="link" v-ripple>
+  <q-item clickable tag="a" :to="link" v-ripple>
     <q-item-section avatar>
       <q-icon :name="icon" />
     </q-item-section>
