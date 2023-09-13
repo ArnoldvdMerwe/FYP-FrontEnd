@@ -62,7 +62,7 @@
       </template>
     </q-table>
     <q-dialog v-model="editPrompt">
-      <q-card style="min-width: 350px" s>
+      <q-card style="min-width: 350px">
         <q-card-section>
           <div class="text-h6">Edit home</div>
         </q-card-section>
@@ -82,6 +82,21 @@
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancel" v-close-popup />
           <q-btn flat label="Confirm" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="deletePrompt">
+      <q-card style="min-width: 350px">
+        <q-card-section class="row items-center">
+          <q-avatar icon="delete" color="accent" text-color="white" />
+          <span class="q-ml-sm"
+            >Are you sure you want to delete this home?
+          </span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" v-close-popup />
+          <q-btn flat label="Delete" color="accent" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -158,6 +173,7 @@ export default defineComponent({
       homeownerNames: ["Adam", "John", "Jessy"],
       editPrompt: false,
       editHomeowner: null,
+      deletePrompt: false,
     };
   },
 
@@ -166,6 +182,10 @@ export default defineComponent({
       this.editHomeowner = row.owner;
       this.editBalance = row.balance;
       this.editPrompt = true;
+    },
+
+    onDelete(row) {
+      this.deletePrompt = true;
     },
   },
 });
