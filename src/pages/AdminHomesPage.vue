@@ -44,7 +44,7 @@
             flat
             icon="show_chart"
             @click="onView(props.row)"
-            color="info"
+            color="secondary"
           ></q-btn>
           <q-btn
             flat
@@ -100,14 +100,55 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-dialog
+      v-model="chartsPrompt"
+      persistent
+      :maximized="true"
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-card class="bg-secondary text-white">
+        <q-bar>
+          <q-icon name="show_chart" />
+          <div>Home charts</div>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip class="bg-white text-secondary">Close</q-tooltip>
+          </q-btn>
+        </q-bar>
+
+        <q-card-section class="column q-gutter-md" style="height: 95%">
+          <q-card flat bordered class="col q-pa-sm" style="min-width: 300px">
+            <LineChart
+              chart-id="1"
+              dataset-title="Power usage"
+              dataset-color="#507ea1"
+              style="height: 100%"
+            />
+          </q-card>
+          <q-card flat bordered class="col q-pa-sm" style="min-width: 300px">
+            <LineChart
+              chart-id="2"
+              dataset-title="Energy usage"
+              dataset-color="#004d40"
+              style="height: 100%"
+            />
+          </q-card>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import LineChart from "src/components/LineChart.vue";
 
 export default defineComponent({
   name: "AdminHomesPage",
+  components: {
+    LineChart,
+  },
 
   data() {
     return {
@@ -171,6 +212,8 @@ export default defineComponent({
       ],
       selectedHomeowner: null,
       homeownerNames: ["Adam", "John", "Jessy"],
+      chartsPrompt: false,
+      chartsMaximizedToggle: false,
       editPrompt: false,
       editHomeowner: null,
       deletePrompt: false,
@@ -178,6 +221,10 @@ export default defineComponent({
   },
 
   methods: {
+    onView(row) {
+      this.chartsPrompt = true;
+    },
+
     onEdit(row) {
       this.editHomeowner = row.owner;
       this.editBalance = row.balance;
