@@ -1,10 +1,35 @@
 <template>
   <q-page padding>
-    <q-card flat bordered>
-      <q-btn-group spread>
-        <q-btn fab-mini label="Add new home" icon="add" />
-      </q-btn-group>
-    </q-card>
+    <div class="row flex-center">
+      <q-card flat bordered>
+        <q-btn-dropdown
+          flat
+          square
+          label="Add new home"
+          menu-anchor="bottom middle"
+          menu-self="top middle"
+        >
+          <q-form @submit="onCreateHome" class="q-pa-md q-gutter-md">
+            <p class="text-subtitle1">
+              Make sure the equipment has been installed in the home and is
+              operational.
+            </p>
+            <q-input filled v-model="email" label="Home number" />
+            <q-select
+              filled
+              v-model="selectedHomeowner"
+              :options="homeownerNames"
+              label="Homeowner"
+            />
+            <div class="row flex-center">
+              <div class="column flex-center">
+                <q-btn label="Create" type="submit" color="secondary" />
+              </div>
+            </div>
+          </q-form>
+        </q-btn-dropdown>
+      </q-card>
+    </div>
     <q-table
       class="q-mt-md"
       flat
@@ -96,6 +121,8 @@ export default defineComponent({
           energy: 5230,
         },
       ],
+      selectedHomeowner: null,
+      homeownerNames: ["Adam", "John", "Jessy"],
     };
   },
 });
