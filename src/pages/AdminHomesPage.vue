@@ -61,6 +61,30 @@
         </q-td>
       </template>
     </q-table>
+    <q-dialog v-model="editPrompt">
+      <q-card style="min-width: 350px" s>
+        <q-card-section>
+          <div class="text-h6">Edit home</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-form class="q-gutter-md">
+            <q-select
+              filled
+              v-model="editHomeowner"
+              :options="homeownerNames"
+              label="Homeowner"
+            />
+            <q-input filled v-model="editBalance" label="Balance" />
+          </q-form>
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Cancel" v-close-popup />
+          <q-btn flat label="Confirm" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -99,6 +123,12 @@ export default defineComponent({
           field: "energy",
           sortable: true,
         },
+        {
+          name: "balance",
+          label: "Account balance",
+          field: "balance",
+          sortable: true,
+        },
         { name: "actions", label: "Actions", align: "center" },
       ],
       rows: [
@@ -107,23 +137,36 @@ export default defineComponent({
           owner: "Ceren Janzen",
           power: 123,
           energy: 500,
+          balance: 1,
         },
         {
           number: 2,
           owner: "Doris Björnsson",
           power: 321,
           energy: 5680,
+          balance: 1000,
         },
         {
           number: 3,
           owner: "Faustino Schuster",
           power: 231,
           energy: 5230,
+          balance: 325,
         },
       ],
       selectedHomeowner: null,
       homeownerNames: ["Adam", "John", "Jessy"],
+      editPrompt: false,
+      editHomeowner: null,
     };
+  },
+
+  methods: {
+    onEdit(row) {
+      this.editHomeowner = row.owner;
+      this.editBalance = row.balance;
+      this.editPrompt = true;
+    },
   },
 });
 </script>
