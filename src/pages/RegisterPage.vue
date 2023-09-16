@@ -10,7 +10,7 @@
               title="Role"
               icon="group"
               :done="step > 1"
-              style="min-height: 395px"
+              style="min-height: 355px"
             >
               <q-select
                 filled
@@ -26,7 +26,7 @@
               title="Details"
               icon="info"
               :done="step > 2"
-              style="min-height: 395px"
+              style="min-height: 355px"
             >
               <div class="q-gutter-md">
                 <q-input
@@ -61,15 +61,6 @@
                   v-model="cellphone"
                   label="Cellphone number"
                 />
-                <q-input
-                  v-if="role == 'Homeowner'"
-                  filled
-                  :error-message="this.errorMsg"
-                  :error="!validEntries"
-                  hide-bottom-space
-                  v-model="home"
-                  label="Home number"
-                />
               </div>
             </q-step>
             <q-step
@@ -77,7 +68,7 @@
               title="Password"
               icon="lock"
               :done="step > 3"
-              style="min-height: 395px"
+              style="min-height: 355px"
             >
               <div class="q-gutter-md">
                 <q-input
@@ -140,7 +131,6 @@ export default {
       last: null,
       email: null,
       cellphone: null,
-      home: null,
       password: null,
       confirmPassword: null,
       role: null,
@@ -174,10 +164,7 @@ export default {
           this.email !== null &&
           this.cellphone !== null
         ) {
-          if (this.role === "Homeowner" && this.home !== null) {
-            this.$refs.stepper.next();
-            this.validEntries = true;
-          } else if (this.role === "Admin") {
+          if (this.role === "Homeowner" || this.role === "Admin") {
             this.$refs.stepper.next();
             this.validEntries = true;
           } else {
@@ -201,8 +188,7 @@ export default {
             this.email,
             this.cellphone,
             this.role,
-            this.password,
-            this.home
+            this.password
           );
         }
       } else {

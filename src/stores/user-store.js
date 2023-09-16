@@ -15,15 +15,7 @@ export const useUserStore = defineStore("user", {
       this.user = user;
     },
 
-    async signUp(
-      firstName,
-      lastName,
-      email,
-      cellphone,
-      userType,
-      password,
-      home
-    ) {
+    async signUp(firstName, lastName, email, cellphone, userType, password) {
       await api.post("/api/user/sign-up/", {
         first_name: firstName,
         last_name: lastName,
@@ -31,7 +23,6 @@ export const useUserStore = defineStore("user", {
         cellphone: cellphone,
         user_type: userType,
         password: password,
-        home_number: home,
       });
       this.router.push("/login");
     },
