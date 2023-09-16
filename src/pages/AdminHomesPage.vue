@@ -1,66 +1,72 @@
 <template>
-  <q-page padding>
-    <div class="row flex-center">
+  <q-page padding class="flex flex-center">
+    <q-list>
       <q-card flat bordered>
-        <q-btn-dropdown
-          flat
-          square
+        <q-expansion-item
           label="Add new home"
-          menu-anchor="bottom middle"
-          menu-self="top middle"
+          icon="home"
+          caption="Add a new home to the community and assign a homeowner to the home."
         >
           <q-form @submit="onCreateHome" class="q-pa-md q-gutter-md">
             <p class="text-subtitle1">
               Make sure the equipment has been installed in the home and is
               operational.
             </p>
-            <q-input filled v-model="email" label="Home number" />
-            <q-select
-              filled
-              v-model="selectedHomeowner"
-              :options="homeownerNames"
-              label="Homeowner"
-            />
+            <div class="row justify-between">
+              <q-input
+                filled
+                v-model="email"
+                label="Home number"
+                class="col q-mr-md"
+              />
+              <q-select
+                filled
+                v-model="selectedHomeowner"
+                :options="homeownerNames"
+                label="Homeowner"
+                class="col q-ml-md"
+              />
+            </div>
             <div class="row flex-center">
               <div class="column flex-center">
                 <q-btn label="Create" type="submit" color="secondary" />
               </div>
             </div>
           </q-form>
-        </q-btn-dropdown>
+        </q-expansion-item>
       </q-card>
-    </div>
-    <q-table
-      class="q-mt-md"
-      flat
-      bordered
-      :rows="rows"
-      :columns="columns"
-      row-key="number"
-    >
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
-          <q-btn
-            flat
-            icon="show_chart"
-            @click="onView(props.row)"
-            color="secondary"
-          ></q-btn>
-          <q-btn
-            flat
-            icon="mode_edit"
-            @click="onEdit(props.row)"
-            color="warning"
-          ></q-btn>
-          <q-btn
-            flat
-            icon="delete"
-            @click="onDelete(props.row)"
-            color="accent"
-          ></q-btn>
-        </q-td>
-      </template>
-    </q-table>
+      <q-table
+        class="q-mt-md"
+        flat
+        bordered
+        :rows="rows"
+        :columns="columns"
+        row-key="number"
+      >
+        <template v-slot:body-cell-actions="props">
+          <q-td :props="props">
+            <q-btn
+              flat
+              icon="show_chart"
+              @click="onView(props.row)"
+              color="secondary"
+            ></q-btn>
+            <q-btn
+              flat
+              icon="mode_edit"
+              @click="onEdit(props.row)"
+              color="warning"
+            ></q-btn>
+            <q-btn
+              flat
+              icon="delete"
+              @click="onDelete(props.row)"
+              color="accent"
+            ></q-btn>
+          </q-td>
+        </template>
+      </q-table>
+    </q-list>
     <q-dialog v-model="editPrompt">
       <q-card style="min-width: 350px">
         <q-card-section>
