@@ -5,6 +5,7 @@
         <q-expansion-item
           label="Add new home"
           icon="home"
+          v-model="expansion"
           caption="Add a new home to the community and assign a homeowner to the home."
         >
           <q-form @submit="onCreateHome" class="q-pa-md q-gutter-md">
@@ -15,7 +16,7 @@
             <div class="row justify-between">
               <q-input
                 filled
-                v-model="email"
+                v-model="inputHomeNumber"
                 label="Home number"
                 class="col q-mr-md"
               />
@@ -67,6 +68,7 @@
         </template>
       </q-table>
     </q-list>
+    <!-- Edit home dialog -->
     <q-dialog v-model="editPrompt">
       <q-card style="min-width: 350px">
         <q-card-section>
@@ -87,10 +89,11 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancel" v-close-popup />
-          <q-btn flat label="Confirm" v-close-popup />
+          <q-btn flat label="Confirm" @click="onEditHome" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- Delete home dialog -->
     <q-dialog v-model="deletePrompt">
       <q-card style="min-width: 350px">
         <q-card-section class="row items-center">
@@ -102,10 +105,17 @@
 
         <q-card-actions align="right">
           <q-btn flat label="Cancel" v-close-popup />
-          <q-btn flat label="Delete" color="accent" v-close-popup />
+          <q-btn
+            flat
+            label="Delete"
+            color="accent"
+            @click="onDeleteHome"
+            v-close-popup
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- Charts dialog -->
     <q-dialog
       v-model="chartsPrompt"
       persistent
@@ -193,37 +203,25 @@ export default defineComponent({
         },
         { name: "actions", label: "Actions", align: "center" },
       ],
-      rows: [
-        {
-          number: 1,
-          owner: "Ceren Janzen",
-          power: 123,
-          energy: 500,
-          balance: 1,
-        },
-        {
-          number: 2,
-          owner: "Doris Björnsson",
-          power: 321,
-          energy: 5680,
-          balance: 1000,
-        },
-        {
-          number: 3,
-          owner: "Faustino Schuster",
-          power: 231,
-          energy: 5230,
-          balance: 325,
-        },
-      ],
+      rows: [],
+      inputHomeNumber: null,
       selectedHomeowner: null,
-      homeownerNames: ["Adam", "John", "Jessy"],
+      homeowners: null,
+      homeownerNames: null,
       chartsPrompt: false,
       chartsMaximizedToggle: false,
       editPrompt: false,
       editHomeowner: null,
+      editHomeNumber: null,
+      deleteHomeNumber: null,
       deletePrompt: false,
+      expansion: false,
     };
+  },
+
+  async mounted() {
+    await this.fetchHomeowners();
+    await this.fetchHomes();
   },
 
   methods: {
@@ -232,13 +230,61 @@ export default defineComponent({
     },
 
     onEdit(row) {
+      this.editHomeNumber = row.number;
       this.editHomeowner = row.owner;
       this.editBalance = row.balance;
       this.editPrompt = true;
     },
 
     onDelete(row) {
+      this.deleteHomeNumber = row.number;
       this.deletePrompt = true;
+    },
+
+    async fetchHomeowners() {
+      // Fetch homeowners
+      let res = await this.$api.get("api/user/homeowners");
+      this.homeowners = res.data;
+
+      // Get names as separate list
+      this.homeownerNames = this.homeowners.map((obj) => obj.name);
+    },
+
+    async fetchHomes() {
+      let res = await this.$api.get("api/home/homes");
+      this.rows = res.data;
+    },
+
+    // Add new home using API
+    async onCreateHome() {
+      await this.$api.post("api/home/add", {
+        home_number: this.inputHomeNumber,
+        homeowner_id: this.homeowners.find(
+          (obj) => obj.name === this.selectedHomeowner
+        ).userId,
+      });
+      this.expansion = false;
+      this.selectedHomeowner = null;
+      this.inputHomeNumber = null;
+      this.fetchHomes();
+    },
+
+    // Edit home details
+    async onEditHome() {
+      await this.$api.post("api/home/edit", {
+        home_number: this.editHomeNumber,
+        homeowner_id: this.homeowners.find(
+          (obj) => obj.name === this.editHomeowner
+        ).userId,
+        account_balance: this.editBalance,
+      });
+      this.fetchHomes();
+    },
+
+    // Delete home
+    async onDeleteHome() {
+      await this.$api.delete(`api/home/delete/${this.deleteHomeNumber}`);
+      this.fetchHomes();
     },
   },
 });
