@@ -24,6 +24,11 @@ const routes = [
         component: () => import("pages/AdminInverterPage.vue"),
         meta: { admin: true },
       },
+      {
+        path: "/adminrates",
+        component: () => import("pages/AdminRatesPage.vue"),
+        meta: { admin: true },
+      },
     ],
   },
   {
