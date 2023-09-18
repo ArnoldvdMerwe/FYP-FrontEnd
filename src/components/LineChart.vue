@@ -16,42 +16,59 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    datasetTitle: {
+    datasetTitle1: {
       type: String,
       required: true,
     },
-    datasetColor: {
+    datasetTitle2: {
+      type: String,
+    },
+    device: {
       type: String,
       required: true,
+    },
+    measurement1: {
+      type: String,
+      required: true,
+    },
+    measurement2: {
+      type: String,
     },
   },
 
   data() {
     return {
-      data: {
+      chartData: {
         type: "line",
         data: {
-          labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+          labels: [],
           datasets: [
             {
-              label: this.datasetTitle,
-              data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-              backgroundColor: this.datasetColor,
-              borderColor: this.datasetColor,
+              label: this.datasetTitle1,
+              data: [],
+              fill: true,
+            },
+            {
+              label: this.datasetTitle2,
+              data: [],
+              fill: true,
             },
           ],
         },
         options: {
           maintainAspectRatio: false,
           responsive: true,
-          lineTension: 1,
+          lineTension: 0,
           plugins: {
             legend: {
-              display: false,
+              display: true,
             },
             title: {
               display: true,
-              text: this.datasetTitle,
+              text: "Measurements",
+            },
+            colors: {
+              enabled: true,
             },
           },
         },
@@ -59,9 +76,29 @@ export default defineComponent({
     };
   },
 
-  mounted() {
+  async mounted() {
     const ctx = document.getElementById(this.chartId);
-    new Chart(ctx, this.data);
+    new Chart(ctx, this.chartData);
+    await this.fetchChartData();
+  },
+
+  methods: {
+    async fetchChartData() {
+      let res = await this.$api.get(
+        `api/measurement/${this.measurement1}/${this.device}`
+      );
+      let resData = res.data;
+      this.chartData.data.labels = resData.labels;
+      this.chartData.data.datasets[0].data = resData.data;
+
+      if (this.measurement2 !== null) {
+        let res = await this.$api.get(
+          `api/measurement/${this.measurement2}/${this.device}`
+        );
+        let resData = res.data;
+        this.chartData.data.datasets[1].data = resData.data;
+      }
+    },
   },
 });
 </script>

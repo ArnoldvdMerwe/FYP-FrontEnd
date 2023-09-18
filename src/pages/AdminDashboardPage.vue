@@ -25,20 +25,15 @@
         </q-card>
       </div>
     </div>
-    <div class="col q-mt-md row q-gutter-md justify-evenly">
+    <div class="col q-mt-md row justify-center">
       <q-card flat bordered class="col q-pa-sm" style="min-width: 300px">
         <LineChart
           chart-id="1"
-          dataset-title="Instant community power usage"
-          dataset-color="#507ea1"
-          style="height: 100%"
-        />
-      </q-card>
-      <q-card flat bordered class="col q-pa-sm" style="min-width: 300px">
-        <LineChart
-          chart-id="2"
-          dataset-title="Community energy usage"
-          dataset-color="#004d40"
+          dataset-title1="Instant community power usage (W)"
+          dataset-title2="Community energy usage (Watt-minutes)"
+          device="test"
+          measurement1="power"
+          measurement2="total"
           style="height: 100%"
         />
       </q-card>
