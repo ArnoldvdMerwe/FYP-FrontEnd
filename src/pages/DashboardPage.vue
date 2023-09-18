@@ -1,49 +1,42 @@
 <template>
-  <q-page class="q-pa-md flex justify-around">
-    <div class="column justify-evenly no-wrap">
-      <div class="row q-gutter-md flex-center">
-        <div
-          v-for="item in cardList"
-          :key="item.title"
-          class="col-xl-3 col-lg-3 col-md-4 col-sm-8 col-xs-8"
-        >
-          <q-card flat bordered>
-            <q-card-section horizontal class="items-center">
-              <q-card-section :class="item.class">
-                <q-icon :name="item.icon" color="white" size="3em"></q-icon>
-              </q-card-section>
-              <q-card-section class="q-pa-none">
-                <q-item>
-                  <q-item-section>
-                    <q-item-label class="text-h6">
-                      {{ item.value }}
-                    </q-item-label>
-                    <q-item-label caption> {{ item.title }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-card-section>
+  <q-page padding class="flex column">
+    <div class="col row q-gutter-md flex-center">
+      <div
+        v-for="item in cardList"
+        :key="item.title"
+        class="col-xl-3 col-lg-3 col-md-4 col-sm-8 col-xs-8"
+      >
+        <q-card flat bordered>
+          <q-card-section horizontal class="items-center">
+            <q-card-section :class="item.class">
+              <q-icon :name="item.icon" color="white" size="3em"></q-icon>
             </q-card-section>
-          </q-card>
-        </div>
-      </div>
-      <div class="col-6 q-pt-md row q-gutter-md justify-evenly">
-        <q-card flat bordered class="col-5 q-pa-sm" style="min-width: 300px">
-          <LineChart
-            chart-id="1"
-            dataset-title="Instant power usage"
-            dataset-color="#507ea1"
-            style="height: 100%"
-          />
-        </q-card>
-        <q-card flat bordered class="col-5 q-pa-sm" style="min-width: 300px">
-          <LineChart
-            chart-id="2"
-            dataset-title="Energy usage"
-            dataset-color="#004d40"
-            style="height: 100%"
-          />
+            <q-card-section class="q-pa-none">
+              <q-item>
+                <q-item-section>
+                  <q-item-label class="text-h6">
+                    {{ item.value }}
+                  </q-item-label>
+                  <q-item-label caption> {{ item.title }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card-section>
         </q-card>
       </div>
+    </div>
+    <div class="col q-mt-md row justify-center">
+      <q-card flat bordered class="col q-pa-sm" style="min-width: 300px">
+        <LineChart
+          chart-id="1"
+          dataset-title1="Instant power usage (W)"
+          dataset-title2="Energy usage over time (Watt-minutes)"
+          device="test"
+          measurement1="power"
+          measurement2="total"
+          style="height: 100%"
+        />
+      </q-card>
     </div>
   </q-page>
 </template>
