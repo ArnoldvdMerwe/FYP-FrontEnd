@@ -47,11 +47,13 @@ export default defineComponent({
               label: this.datasetTitle1,
               data: [],
               fill: true,
+              order: 2,
             },
             {
               label: this.datasetTitle2,
               data: [],
               fill: true,
+              order: 1,
             },
           ],
         },
