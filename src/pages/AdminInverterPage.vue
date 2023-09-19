@@ -20,14 +20,23 @@
               </q-item-label>
             </q-item-section>
             <q-item-section side top>
-              <q-toggle color="accent" v-model="powerOutageToggle" />
+              <q-toggle v-model="powerOutageToggle" />
+            </q-item-section>
+          </q-item>
+          <q-item>
+            <q-item-section>
+              <q-item-label>Load control active</q-item-label>
+              <q-item-label caption> Make load control active </q-item-label>
+            </q-item-section>
+            <q-item-section side top>
+              <q-toggle v-model="loadControlToggle" />
             </q-item-section>
           </q-item>
           <q-item>
             <q-item-section>
               <q-item-label>Load limit</q-item-label>
               <q-item-label caption>
-                Limit maximum power used by each house
+                Limit maximum power used by entire community
               </q-item-label>
             </q-item-section>
             <q-item-section side top>
@@ -36,7 +45,12 @@
           </q-item>
         </q-list>
       </q-card>
-      <q-btn class="self-center" color="secondary" label="Apply" />
+      <q-btn
+        class="self-center"
+        color="secondary"
+        label="Apply"
+        @click="updateData"
+      />
     </div>
   </q-page>
 </template>
@@ -51,8 +65,35 @@ export default defineComponent({
     return {
       simulateInverterToggle: false,
       powerOutageToggle: false,
+      loadControlToggle: false,
       loadLimit: null,
     };
+  },
+
+  async mounted() {
+    await this.fetchData();
+  },
+
+  methods: {
+    async fetchData() {
+      let res = await this.$api.get("api/inverter");
+      let resData = res.data;
+
+      this.simulateInverterToggle = resData.simulateInverterToggle;
+      this.powerOutageToggle = resData.powerOutageToggle;
+      this.loadControlToggle = resData.loadControlToggle;
+      this.loadLimit = resData.loadLimit;
+    },
+
+    async updateData() {
+      await this.$api.post("api/inverter/edit", {
+        simulate_inverter: this.simulateInverterToggle,
+        loadshedding: this.powerOutageToggle,
+        load_control: this.loadControlToggle,
+        load_limit_community: this.loadLimit,
+      });
+      await this.fetchData();
+    },
   },
 });
 </script>
