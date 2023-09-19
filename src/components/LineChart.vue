@@ -1,6 +1,9 @@
 <template>
   <div>
     <canvas :id="chartId"></canvas>
+    <q-inner-loading :showing="loading">
+      <q-spinner size="50px" color="primary" />
+    </q-inner-loading>
   </div>
 </template>
 
@@ -38,6 +41,7 @@ export default defineComponent({
 
   data() {
     return {
+      loading: false,
       chartData: {
         type: "line",
         data: {
@@ -79,8 +83,10 @@ export default defineComponent({
   },
 
   async mounted() {
+    this.loading = true;
     const ctx = document.getElementById(this.chartId);
     await this.fetchChartData();
+    this.loading = false;
     new Chart(ctx, this.chartData);
   },
 
