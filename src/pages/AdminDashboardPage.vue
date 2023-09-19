@@ -55,31 +55,65 @@ export default defineComponent({
     return {
       cardList: [
         {
-          value: "1234 W",
+          value: "",
           title: "Current community power usage",
           icon: "bolt",
           class: "bg-info",
         },
         {
-          value: "217.3 [c/kWh]",
+          value: "",
           title: "Current electrical rate",
           icon: "toll",
           class: "bg-accent",
         },
         {
-          value: "Inactive",
+          value: "",
           title: "Load shedding status",
           icon: "power",
           class: "bg-positive",
         },
         {
-          value: "467 W",
-          title: "Load control limit",
+          value: "",
+          title: "Community load control limit",
           icon: "priority_high",
           class: "bg-accent",
         },
       ],
     };
+  },
+  async mounted() {
+    await this.fetchData();
+  },
+
+  methods: {
+    async fetchData() {
+      let res = await this.$api.get("api/dashboard/admin");
+
+      // Set the correct values
+      // Current power usage
+      if (typeof res.data.power === "number") {
+        this.cardList[0].value = `${res.data.power} W`;
+      } else {
+        this.cardList[0].value = res.data.power;
+      }
+      // Current electrical rate
+      this.cardList[1].value = `${res.data.current_rate} [c/kWh]`;
+      // Load shedding status
+      this.cardList[2].value = res.data.loadshedding;
+      if (this.cardList[2].value === "Inactive") {
+        this.cardList[2].class = "bg-positive";
+      } else {
+        this.cardList[2].class = "bg-accent";
+      }
+      // Load limit
+      if (typeof res.data.load_limit !== "string") {
+        this.cardList[3].value = `${res.data.load_limit} W`;
+        this.cardList[3].class = "bg-warning";
+      } else {
+        this.cardList[3].value = res.data.load_limit;
+        this.cardList[3].class = "bg-positive";
+      }
+    },
   },
 });
 </script>

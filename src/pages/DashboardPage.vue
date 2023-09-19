@@ -106,7 +106,9 @@ export default defineComponent({
 
   methods: {
     async fetchData() {
-      let res = await this.$api.get(`api/dashboard/${this.user.user_id}`);
+      let res = await this.$api.get(
+        `api/dashboard/homeowner/${this.user.user_id}`
+      );
 
       // Set the correct values
       // Acount balance
@@ -121,13 +123,25 @@ export default defineComponent({
       this.cardList[2].value = `${res.data.current_rate} [c/kWh]`;
       // Load shedding status
       this.cardList[3].value = res.data.loadshedding;
+      if (this.cardList[4].value === "Inactive") {
+        this.cardList[4].class = "bg-positive";
+      } else {
+        this.cardList[4].class = "bg-accent";
+      }
       // Opt in to receive power during load shedding or not
       this.cardList[4].value = res.data.receive_power_loadshedding;
+      if (this.cardList[4].value === "No") {
+        this.cardList[4].class = "bg-accent";
+      } else {
+        this.cardList[4].class = "bg-positive";
+      }
       // Load limit
       if (typeof res.data.load_limit !== "string") {
         this.cardList[5].value = `${res.data.load_limit} W`;
+        this.cardList[5].class = "bg-warning";
       } else {
         this.cardList[5].value = res.data.load_limit;
+        this.cardList[5].class = "bg-positive";
       }
     },
   },
