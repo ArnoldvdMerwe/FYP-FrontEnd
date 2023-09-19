@@ -6,6 +6,7 @@
           label="Add new time slot"
           icon="schedule"
           caption="Create a new time slot for electrical rates."
+          v-model="expansion"
         >
           <q-form @submit="onAddTimeSlot" class="q-pa-md q-gutter-md">
             <p class="text-subtitle1">Time slots use the 24-hour system.</p>
@@ -13,13 +14,13 @@
               <q-input
                 filled
                 v-model="inputStartTime"
-                label="Start time [hh:mm]"
+                label="Start time [hh:mm:ss]"
                 class="col q-mr-md"
               />
               <q-input
                 filled
                 v-model="inputEndTime"
-                label="End time [hh:mm]"
+                label="End time [hh:mm:ss]"
                 class="col q-ml-md"
               />
             </div>
@@ -70,6 +71,7 @@
         </template>
       </q-table>
     </q-list>
+    <!-- Edit time slot dialog -->
     <q-dialog v-model="editPrompt">
       <q-card style="min-width: 400px">
         <q-card-section>
@@ -81,13 +83,13 @@
             <q-input
               filled
               v-model="editStartTime"
-              label="Start time [hh:mm]"
+              label="Start time [hh:mm:ss]"
               class="col q-mr-md"
             />
             <q-input
               filled
               v-model="editEndTime"
-              label="End time [hh:mm]"
+              label="End time [hh:mm:ss]"
               class="col q-ml-md"
             />
             <q-input
@@ -105,10 +107,11 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancel" v-close-popup />
-          <q-btn flat label="Confirm" v-close-popup />
+          <q-btn flat label="Confirm" @click="onEditTimeSlot" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- Delete time slot dialog -->
     <q-dialog v-model="deletePrompt">
       <q-card style="min-width: 350px">
         <q-card-section class="row items-center">
@@ -120,7 +123,13 @@
 
         <q-card-actions align="right">
           <q-btn flat label="Cancel" v-close-popup />
-          <q-btn flat label="Delete" color="accent" v-close-popup />
+          <q-btn
+            flat
+            label="Delete"
+            color="accent"
+            @click="onDeleteTimeSlot"
+            v-close-popup
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -159,34 +168,95 @@ export default defineComponent({
         },
         { name: "actions", label: "Actions", align: "center" },
       ],
-      rows: [
-        {
-          start: "00:00",
-          end: "23:59",
-          normalRate: 200,
-          loadsheddingRate: 200,
-        },
-      ],
+      rows: [],
+      inputStartTime: null,
+      inputEndTime: null,
+      inputNormalRate: null,
+      inputLoadsheddingRate: null,
       editPrompt: false,
       editStartTime: null,
       editEndTime: null,
       editNormalRate: null,
       editLoadsheddingRate: null,
+      oldStartTime: null,
+      oldEndTime: null,
+      oldNormalRate: null,
+      oldLoadsheddingRate: null,
       deletePrompt: false,
+      expansion: false,
     };
+  },
+
+  async mounted() {
+    await this.fetchRates();
   },
 
   methods: {
     onEdit(row) {
       this.editStartTime = row.start;
       this.editEndTime = row.end;
-      (this.editNormalRate = row.normalRate),
-        (this.editLoadsheddingRate = row.loadsheddingRate);
+      this.editNormalRate = row.normalRate;
+      this.editLoadsheddingRate = row.loadsheddingRate;
       this.editPrompt = true;
+      // Remember old values to send it to API as well
+      this.oldStartTime = row.start;
+      this.oldEndTime = row.end;
+      this.oldNormalRate = row.normalRate;
+      this.oldLoadsheddingRate = row.loadsheddingRate;
     },
 
     onDelete(row) {
       this.deletePrompt = true;
+      // Remember old values to send it to API as well
+      this.oldStartTime = row.start;
+      this.oldEndTime = row.end;
+      this.oldNormalRate = row.normalRate;
+      this.oldLoadsheddingRate = row.loadsheddingRate;
+    },
+
+    // Fetch the rates and time slots from the API
+    async fetchRates() {
+      let res = await this.$api.get("api/rate/");
+      this.rows = res.data;
+    },
+
+    // Add a new time slot and rate
+    async onAddTimeSlot() {
+      await this.$api.post("api/rate/add", {
+        start: this.inputStartTime,
+        end: this.inputEndTime,
+        normalRate: this.inputNormalRate,
+        loadsheddingRate: this.inputLoadsheddingRate,
+      });
+
+      this.expansion = false;
+      this.inputStartTime = null;
+      this.inputEndTime = null;
+      this.inputNormalRate = null;
+      this.inputLoadsheddingRate = null;
+      await this.fetchRates();
+    },
+
+    // Edit a time slot and rate
+    async onEditTimeSlot() {
+      await this.$api.post("api/rate/edit", {
+        newStartTime: this.editStartTime,
+        newEndTime: this.editEndTime,
+        newNormalRate: this.editNormalRate,
+        newLoadsheddingRate: this.editLoadsheddingRate,
+        oldStartTime: this.oldStartTime,
+        oldEndTime: this.oldEndTime,
+        oldNormalRate: this.oldNormalRate,
+        oldLoadsheddingRate: this.oldLoadsheddingRate,
+      });
+      this.fetchRates();
+    },
+
+    async onDeleteTimeSlot() {
+      await this.$api.delete(
+        `api/rate/delete/${this.oldStartTime}/${this.oldEndTime}/${this.oldNormalRate}/${this.oldLoadsheddingRate}`
+      );
+      this.fetchRates();
     },
   },
 });
