@@ -133,20 +133,15 @@
           </q-btn>
         </q-bar>
 
-        <q-card-section class="column q-gutter-md" style="height: 95%">
+        <q-card-section class="column" style="height: 95%">
           <q-card flat bordered class="col q-pa-sm" style="min-width: 300px">
             <LineChart
               chart-id="1"
-              dataset-title="Power usage"
-              dataset-color="#507ea1"
-              style="height: 100%"
-            />
-          </q-card>
-          <q-card flat bordered class="col q-pa-sm" style="min-width: 300px">
-            <LineChart
-              chart-id="2"
-              dataset-title="Energy usage"
-              dataset-color="#004d40"
+              dataset-title1="Instant power usage (W)"
+              dataset-title2="Energy usage over time (Watt-minutes)"
+              device="test"
+              measurement1="power"
+              measurement2="total"
               style="height: 100%"
             />
           </q-card>

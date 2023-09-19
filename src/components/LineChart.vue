@@ -80,8 +80,8 @@ export default defineComponent({
 
   async mounted() {
     const ctx = document.getElementById(this.chartId);
-    new Chart(ctx, this.chartData);
     await this.fetchChartData();
+    new Chart(ctx, this.chartData);
   },
 
   methods: {
