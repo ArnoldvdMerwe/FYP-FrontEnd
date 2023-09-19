@@ -44,6 +44,8 @@
 <script>
 import { defineComponent } from "vue";
 import LineChart from "src/components/LineChart.vue";
+import { useUserStore } from "../stores/user-store";
+import { mapState } from "pinia";
 
 export default defineComponent({
   name: "DashboardPage",
@@ -55,43 +57,79 @@ export default defineComponent({
     return {
       cardList: [
         {
-          value: "10000",
+          value: "",
           title: "Account balance",
           icon: "account_balance_wallet",
           class: "bg-secondary",
         },
         {
-          value: "1234 kW",
+          value: "",
           title: "Current power usage",
           icon: "bolt",
           class: "bg-info",
         },
         {
-          value: "217.3 [c/kWh]",
+          value: "",
           title: "Current electrical rate",
           icon: "toll",
           class: "bg-accent",
         },
         {
-          value: "Inactive",
+          value: "",
           title: "Load shedding status",
           icon: "power",
           class: "bg-positive",
         },
         {
-          value: "Opted in",
+          value: "",
           title: "Receive power during load shedding",
           icon: "electrical_services",
           class: "bg-positive",
         },
         {
-          value: "467 W",
-          title: "Load control limit",
+          value: "",
+          title: "Load limit",
           icon: "priority_high",
           class: "bg-accent",
         },
       ],
     };
+  },
+
+  computed: {
+    ...mapState(useUserStore, ["user"]),
+  },
+
+  async mounted() {
+    await this.fetchData();
+  },
+
+  methods: {
+    async fetchData() {
+      let res = await this.$api.get(`api/dashboard/${this.user.user_id}`);
+
+      // Set the correct values
+      // Acount balance
+      this.cardList[0].value = res.data.account_balance;
+      // Current power usage
+      if (typeof res.data.power === "number") {
+        this.cardList[1].value = `${res.data.power} W`;
+      } else {
+        this.cardList[1].value = res.data.power;
+      }
+      // Current electrical rate
+      this.cardList[2].value = `${res.data.current_rate} [c/kWh]`;
+      // Load shedding status
+      this.cardList[3].value = res.data.loadshedding;
+      // Opt in to receive power during load shedding or not
+      this.cardList[4].value = res.data.receive_power_loadshedding;
+      // Load limit
+      if (typeof res.data.load_limit !== "string") {
+        this.cardList[5].value = `${res.data.load_limit} W`;
+      } else {
+        this.cardList[5].value = res.data.load_limit;
+      }
+    },
   },
 });
 </script>
