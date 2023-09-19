@@ -33,7 +33,7 @@
           dataset-title2="Energy usage over time (Watt-minutes)"
           device="test"
           measurement1="power"
-          measurement2="total"
+          measurement2="energy"
           style="height: 100%"
         />
       </q-card>
