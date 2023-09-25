@@ -34,9 +34,6 @@
                     <router-link to="/register">Sign up</router-link>
                   </p>
                 </div>
-                <p>
-                  <router-link to="/dashboard">Guest login</router-link>
-                </p>
               </div>
             </div>
           </q-form>
