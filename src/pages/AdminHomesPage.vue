@@ -23,7 +23,7 @@
               <q-select
                 filled
                 v-model="selectedHomeowner"
-                :options="homeownerNames"
+                :options="unassignedHomeownerNames"
                 label="Homeowner"
                 class="col q-ml-md"
               />
@@ -80,7 +80,7 @@
             <q-select
               filled
               v-model="editHomeowner"
-              :options="homeownerNames"
+              :options="unassignedHomeownerNames"
               label="Homeowner"
             />
             <q-input filled v-model="editBalance" label="Balance" />
@@ -201,8 +201,9 @@ export default defineComponent({
       rows: [],
       inputHomeNumber: null,
       selectedHomeowner: null,
-      homeowners: null,
-      homeownerNames: null,
+      unassignedHomeowners: null,
+      allHomeowners: null,
+      unassignedHomeownerNames: null,
       chartsPrompt: false,
       chartsMaximizedToggle: false,
       editPrompt: false,
@@ -215,7 +216,8 @@ export default defineComponent({
   },
 
   async mounted() {
-    await this.fetchHomeowners();
+    await this.fetchUnassignedHomeowners();
+    await this.fetchAllHomeowners();
     await this.fetchHomes();
   },
 
@@ -236,13 +238,21 @@ export default defineComponent({
       this.deletePrompt = true;
     },
 
-    async fetchHomeowners() {
+    async fetchUnassignedHomeowners() {
       // Fetch homeowners
-      let res = await this.$api.get("api/user/homeowners");
-      this.homeowners = res.data;
+      let res = await this.$api.get("api/user/unassigned_homeowners");
+      this.unassignedHomeowners = res.data;
 
       // Get names as separate list
-      this.homeownerNames = this.homeowners.map((obj) => obj.name);
+      this.unassignedHomeownerNames = this.unassignedHomeowners.map(
+        (obj) => obj.name
+      );
+    },
+
+    async fetchAllHomeowners() {
+      // Fetch homeowners
+      let res = await this.$api.get("api/user/homeowners");
+      this.allHomeowners = res.data;
     },
 
     async fetchHomes() {
@@ -254,7 +264,7 @@ export default defineComponent({
     async onCreateHome() {
       await this.$api.post("api/home/add", {
         home_number: this.inputHomeNumber,
-        homeowner_id: this.homeowners.find(
+        homeowner_id: this.unassignedHomeowners.find(
           (obj) => obj.name === this.selectedHomeowner
         ).userId,
       });
@@ -262,24 +272,27 @@ export default defineComponent({
       this.selectedHomeowner = null;
       this.inputHomeNumber = null;
       this.fetchHomes();
+      this.fetchUnassignedHomeowners();
     },
 
     // Edit home details
     async onEditHome() {
       await this.$api.post("api/home/edit", {
         home_number: this.editHomeNumber,
-        homeowner_id: this.homeowners.find(
+        homeowner_id: this.allHomeowners.find(
           (obj) => obj.name === this.editHomeowner
         ).userId,
         account_balance: this.editBalance,
       });
       this.fetchHomes();
+      this.fetchUnassignedHomeowners();
     },
 
     // Delete home
     async onDeleteHome() {
       await this.$api.delete(`api/home/delete/${this.deleteHomeNumber}`);
       this.fetchHomes();
+      this.fetchUnassignedHomeowners();
     },
   },
 });
