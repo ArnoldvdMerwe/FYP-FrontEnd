@@ -10,6 +10,10 @@ const routes = [
         component: () => import("pages/DashboardPage.vue"),
       },
       {
+        path: "/settings",
+        component: () => import("pages/SettingsPage.vue"),
+      },
+      {
         path: "/admindashboard",
         component: () => import("pages/AdminDashboardPage.vue"),
         meta: { admin: true },
