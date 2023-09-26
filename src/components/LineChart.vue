@@ -1,6 +1,6 @@
 <template>
   <div>
-    <canvas :id="chartId"></canvas>
+    <canvas ref="chart" :id="chartId"></canvas>
     <q-inner-loading :showing="loading">
       <q-spinner size="50px" color="primary" />
     </q-inner-loading>
@@ -37,10 +37,14 @@ export default defineComponent({
     measurement2: {
       type: String,
     },
+    updateFlag: {
+      type: Boolean,
+    },
   },
 
   data() {
     return {
+      chart: null,
       loading: false,
       chartData: {
         type: "line",
@@ -82,12 +86,23 @@ export default defineComponent({
     };
   },
 
+  watch: {
+    updateFlag: {
+      handler: async function (newVal, oldVal) {
+        await this.fetchChartData();
+        this.chart.update();
+      },
+    },
+  },
+
   async mounted() {
     this.loading = true;
     const ctx = document.getElementById(this.chartId);
     await this.fetchChartData();
     this.loading = false;
-    new Chart(ctx, this.chartData);
+    const newChart = new Chart(ctx, this.chartData);
+    Object.seal(newChart);
+    this.chart = newChart;
   },
 
   methods: {

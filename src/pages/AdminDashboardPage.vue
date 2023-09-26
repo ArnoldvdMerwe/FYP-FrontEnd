@@ -31,10 +31,11 @@
           chart-id="1"
           dataset-title1="Instant community power usage (W)"
           dataset-title2="Community energy usage (Watt-minutes)"
-          device="test"
+          device="community"
           measurement1="power"
           measurement2="energy"
           style="height: 100%"
+          :update-flag="updateChart"
         />
       </q-card>
     </div>
@@ -79,10 +80,14 @@ export default defineComponent({
           class: "bg-accent",
         },
       ],
+      firstTime: true,
+      timer: null,
+      updateChart: false,
     };
   },
   async mounted() {
     await this.fetchData();
+    this.timer = setInterval(this.fetchData, 15000);
   },
 
   methods: {
@@ -112,6 +117,12 @@ export default defineComponent({
       } else {
         this.cardList[3].value = res.data.load_limit;
         this.cardList[3].class = "bg-positive";
+      }
+
+      if (!this.firstTime) {
+        this.updateChart = !this.updateChart;
+      } else {
+        this.firstTime = false;
       }
     },
   },
