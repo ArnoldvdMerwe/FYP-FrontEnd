@@ -138,8 +138,8 @@
             <LineChart
               chart-id="1"
               dataset-title1="Instant power usage (W)"
-              dataset-title2="Energy usage over time (Watt-minutes)"
-              device="test"
+              dataset-title2="Energy usage over time (Watt-hour)"
+              device="community"
               measurement1="power"
               measurement2="energy"
               style="height: 100%"

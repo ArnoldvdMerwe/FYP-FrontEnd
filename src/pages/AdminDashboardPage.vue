@@ -30,7 +30,7 @@
         <LineChart
           chart-id="1"
           dataset-title1="Instant community power usage (W)"
-          dataset-title2="Community energy usage (Watt-minutes)"
+          dataset-title2="Community energy usage (Watt-hour)"
           device="community"
           measurement1="power"
           measurement2="energy"

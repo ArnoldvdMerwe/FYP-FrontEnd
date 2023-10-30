@@ -28,13 +28,15 @@
     <div class="col q-mt-md row justify-center">
       <q-card flat bordered class="col q-pa-sm" style="min-width: 300px">
         <LineChart
+          v-if="homeNumberFetched"
           chart-id="1"
           dataset-title1="Instant power usage (W)"
-          dataset-title2="Energy usage over time (Watt-minutes)"
-          device="test"
+          dataset-title2="Energy usage over time (Watt-hour)"
+          :device="homeNumber"
           measurement1="power"
           measurement2="energy"
           style="height: 100%"
+          :update-flag="updateChart"
         />
       </q-card>
     </div>
@@ -55,6 +57,8 @@ export default defineComponent({
 
   data() {
     return {
+      homeNumber: null,
+      homeNumberFetched: false,
       cardList: [
         {
           value: "",
@@ -93,6 +97,9 @@ export default defineComponent({
           class: "bg-accent",
         },
       ],
+      firstTime: true,
+      timer: null,
+      updateChart: false,
     };
   },
 
@@ -101,10 +108,24 @@ export default defineComponent({
   },
 
   async mounted() {
+    await this.fetchHomeNumber();
     await this.fetchData();
+    this.timer = setInterval(this.fetchData, 15000);
   },
 
   methods: {
+    async fetchHomeNumber() {
+      try {
+        let res = await this.$api.get(
+          `api/user/home_number/${this.user.user_id}`
+        );
+        this.homeNumber = `home-${res.data.home_number}`;
+        this.homeNumberFetched = true;
+      } catch (err) {
+        this.homeNumber = "";
+      }
+    },
+
     async fetchData() {
       let res = await this.$api.get(
         `api/dashboard/homeowner/${this.user.user_id}`
@@ -123,10 +144,10 @@ export default defineComponent({
       this.cardList[2].value = `${res.data.current_rate} [c/kWh]`;
       // Load shedding status
       this.cardList[3].value = res.data.loadshedding;
-      if (this.cardList[4].value === "Inactive") {
-        this.cardList[4].class = "bg-positive";
+      if (this.cardList[3].value === "Inactive") {
+        this.cardList[3].class = "bg-positive";
       } else {
-        this.cardList[4].class = "bg-accent";
+        this.cardList[3].class = "bg-accent";
       }
       // Opt in to receive power during load shedding or not
       this.cardList[4].value = res.data.receive_power_loadshedding;
@@ -142,6 +163,12 @@ export default defineComponent({
       } else {
         this.cardList[5].value = res.data.load_limit;
         this.cardList[5].class = "bg-positive";
+      }
+
+      if (!this.firstTime) {
+        this.updateChart = !this.updateChart;
+      } else {
+        this.firstTime = false;
       }
     },
   },
