@@ -139,7 +139,7 @@
               chart-id="1"
               dataset-title1="Instant power usage (W)"
               dataset-title2="Energy usage over time (Watt-hour)"
-              device="community"
+              :device="chartsHomeNumber"
               measurement1="power"
               measurement2="energy"
               style="height: 100%"
@@ -186,7 +186,7 @@ export default defineComponent({
         },
         {
           name: "energy",
-          label: "Energy usage over last 24 hours (kWh)",
+          label: "Energy usage over last 24 hours (Wh)",
           field: "energy",
           sortable: true,
         },
@@ -212,6 +212,8 @@ export default defineComponent({
       deleteHomeNumber: null,
       deletePrompt: false,
       expansion: false,
+      chartsHomeNumber: null,
+      timer: null,
     };
   },
 
@@ -219,10 +221,12 @@ export default defineComponent({
     await this.fetchUnassignedHomeowners();
     await this.fetchAllHomeowners();
     await this.fetchHomes();
+    this.timer = setInterval(this.fetchHomes, 15000);
   },
 
   methods: {
     onView(row) {
+      this.chartsHomeNumber = `home-${row.number}`;
       this.chartsPrompt = true;
     },
 
