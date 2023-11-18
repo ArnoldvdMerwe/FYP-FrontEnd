@@ -110,7 +110,7 @@ export default defineComponent({
   async mounted() {
     await this.fetchHomeNumber();
     await this.fetchData();
-    this.timer = setInterval(this.fetchData, 15000);
+    this.timer = setInterval(this.fetchData, process.env.APIUpdateInterval);
   },
 
   methods: {

@@ -62,7 +62,10 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        // This is in milliseconds
+        APIUpdateInterval: 1000,
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,

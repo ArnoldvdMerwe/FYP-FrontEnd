@@ -221,7 +221,7 @@ export default defineComponent({
     await this.fetchUnassignedHomeowners();
     await this.fetchAllHomeowners();
     await this.fetchHomes();
-    this.timer = setInterval(this.fetchHomes, 15000);
+    this.timer = setInterval(this.fetchHomes, process.env.APIUpdateInterval);
   },
 
   methods: {
